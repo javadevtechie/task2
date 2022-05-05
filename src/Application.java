@@ -21,7 +21,7 @@ public class Application {
 		
 		Scanner sc = new Scanner(System.in);
 		int ch = 1;
-		while (ch != 5) {
+		while (ch != 6) {
 			printMenu();
 			System.out.println("Enter Choice>:");
 			 ch = sc.nextInt();
