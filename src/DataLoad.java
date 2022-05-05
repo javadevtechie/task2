@@ -152,6 +152,24 @@ public class DataLoad {
 
 	}
 
+	
+	public static List<Hire> loadBoatHires(){
+		Hire hire=new Hire();
+		hire.setMemberid(4);
+		hire.setMotorBoatId(1);
+		hire.setSlot("1-11:00");
+		
+		Hire hire1=new Hire();
+		hire.setMemberid(5);
+		hire.setMotorBoatId(2);
+		hire.setSlot("2-11:00");
+		
+		
+		List<Hire> hires=new ArrayList<Hire>();
+		hires.add(hire);
+		hires.add(hire1);
+		return hires;
+	}
 	public static List<Booking> loadBookings() {
 
 		List<Booking> bookings = new ArrayList<Booking>();

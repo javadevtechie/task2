@@ -1,32 +1,30 @@
-import java.util.Date;
-
 public class Hire {
-	private int hiringId;
-	private int memberId;
-	private Date hiringDate;
+	private int memberid;
+	private int motorBoatId;
+	private String slot;
 
-	public int getHiringId() {
-		return hiringId;
+	public int getMemberid() {
+		return memberid;
 	}
 
-	public void setHiringId(int hiringId) {
-		this.hiringId = hiringId;
+	public void setMemberid(int memberid) {
+		this.memberid = memberid;
 	}
 
-	public int getMemberId() {
-		return memberId;
+	public int getMotorBoatId() {
+		return motorBoatId;
 	}
 
-	public void setMemberId(int memberId) {
-		this.memberId = memberId;
+	public void setMotorBoatId(int motorBoatId) {
+		this.motorBoatId = motorBoatId;
 	}
 
-	public Date getHiringDate() {
-		return hiringDate;
+	public String getSlot() {
+		return slot;
 	}
 
-	public void setHiringDate(Date hiringDate) {
-		this.hiringDate = hiringDate;
+	public void setSlot(String slot) {
+		this.slot = slot;
 	}
 
 }

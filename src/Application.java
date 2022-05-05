@@ -7,6 +7,54 @@ import java.util.stream.Collectors;
 public class Application {
 
 	public static void main(String[] args) {
+		// booklessonForMember();
+		// getMemberDetails() ;
+		// getListOfInstructorsForlesson();
+	}
+
+	public static void hireMotorBoat() {
+		System.out.println("List of Members");
+		showListOfMembers();
+		Scanner sc = new Scanner(System.in);
+		int memId = sc.nextInt();
+		if(BookingUtil.hireCount(memId)>3) {
+			System.out.println("Bookings limit is exceeded ");
+		}
+		else {
+			System.out.println("Enter the Slot\nDay :");
+			String day = sc.next();
+			System.out.println("Enter the Slot\nHour :");
+			String hour = sc.next();
+			String slot = day.concat("-").concat(hour).concat(":00");
+			
+			if(BookingUtil.bookingCount(memId) >0 && BookingUtil.noofBoatsBusyAtThisSlot(slot)==10) {
+				System.out.println("This member is already involved in lesson or MotorBoat is not available");
+			}
+			else {
+				
+			}
+		}
+	}
+
+	public static void getListOfInstructorsForlesson() {
+		System.out.println("List of instructors");
+		printInstructors();
+		System.out.println("Please enter the Instructor Id");
+		Scanner sc = new Scanner(System.in);
+		int memId = sc.nextInt();
+		List<Booking> bookings = DataLoad.loadBookings().stream().filter(item -> item.getMemberId() == memId)
+				.collect(Collectors.toList());
+		if (bookings.isEmpty()) {
+			System.out.print("There are no lessons booking available for this instructor");
+
+		} else {
+			System.out.println("Member |Slot | MotorBoat");
+			bookings.stream().forEach(item -> {
+				System.out.println(DataLoad.getMemberName(item.getMemberId()) + "|" + item.getSlot() + "|"
+						+ DataLoad.getMotorBoatName(item.getMotorBoatId()));
+
+			});
+		}
 
 	}
 
@@ -20,9 +68,14 @@ public class Application {
 				.collect(Collectors.toList());
 		if (bookings.isEmpty()) {
 			System.out.print("There are no bookings available for this member");
-			
+
 		} else {
-				
+			System.out.println("Instructor |Slot | MotorBoat");
+			bookings.stream().forEach(item -> {
+				System.out.println(DataLoad.getInstructorName(item.getInstructorId()) + "|" + item.getSlot() + "|"
+						+ DataLoad.getMotorBoatName(item.getMotorBoatId()));
+
+			});
 		}
 
 	}
@@ -148,7 +201,7 @@ public class Application {
 	}
 
 	private static void printInstructors() {
-		System.out.println("ID| MotorBoat");
+		System.out.println("ID| instructors");
 		DataLoad.loadInstructors().forEach(item -> {
 			System.out.println(item.getId() + "|" + item.getName());
 		});
