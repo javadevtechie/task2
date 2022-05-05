@@ -1,7 +1,6 @@
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DataLoad {
 
@@ -181,5 +180,33 @@ public class DataLoad {
 		bookings.add(booking1);
 		bookings.add(booking2);
 		return bookings;
+	}
+	public static String getMemberName(int memId) {
+		Optional<String> memname=  loadMembers().stream().filter(item->item.getId()==memId).map(item->item.getName()).findFirst();
+		if(memname.isPresent()) {
+			return memname.get();
+		}
+		return null;
+	}
+	public static String getInstructorName(int instructorId) {
+		Optional<String> instructorName=  loadInstructors().stream().filter(item->item.getId()==instructorId).map(item->item.getName()).findFirst();
+		if(instructorName.isPresent()) {
+			return instructorName.get();
+		}
+		return null;
+	}
+	public static String getMotorBoatName(int boatId) {
+		Optional<String> boatName= loadMotorBoats().stream().filter(item->item.getId()==boatId).map(item->item.getName()).findFirst();
+		if(boatName.isPresent()) {
+			return boatName.get();
+		}
+		return null;
+	}
+	public static String getLessonName(int lessonid) {
+		Optional<String> lessonName= loadLessions().stream().filter(item->item.getId()==lessonid).map(item->item.getName()).findFirst();
+		if(lessonName.isPresent()) {
+			return lessonName.get();
+		}
+		return null;
 	}
 }
