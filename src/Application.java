@@ -4,45 +4,123 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class Application {
+import javafx.scene.chart.PieChart.Data;
 
-	public static void main(String[] args) {
-		// booklessonForMember();
-		// getMemberDetails() ;
-		// getListOfInstructorsForlesson();
+public class Application {
+	List<Hire> hires;
+	List<Booking> bookingsDb;
+
+	public Application() {
+		hires = DataLoad.loadBoatHires();
+		bookingsDb = DataLoad.loadBookings();
 	}
 
-	public static void hireMotorBoat() {
+	public static void main(String[] args) {
+
+		Application a = new Application();
+		
+		Scanner sc = new Scanner(System.in);
+		int ch = 1;
+		while (ch != 5) {
+			printMenu();
+			System.out.println("Enter Choice>:");
+			 ch = sc.nextInt();
+			switch (ch) {
+			case 1:
+				a.booklessonForMember();
+				break;
+			case 2:
+				a.getMemberDetails();
+				break;
+			case 3:
+				a.getListOfInstructorsForlesson();
+				break;
+			case 4:
+				a.hireMotorBoat();
+				break;
+			case 5:
+				a.getMotorBoatSchedule();
+				break;
+				
+			default:
+				break;
+			}
+		}
+	}
+
+	static void printMenu() {
+		System.out.println("1. Book Lesson for member" + "\n2. Get member list"
+				+ "\n3. Get List of instructors for lesson" + "\n4.Hire Motor boat" + "\n5. MotorBoatSchedule"
+				+"\n6. Exit");
+
+	}
+
+	public void getMotorBoatSchedule() {
+		System.out.println("ID | MotorBoat");
+		List<MotorBoat> loadMotorBoats = DataLoad.loadMotorBoats();
+		loadMotorBoats.stream().forEach(motor->{
+			System.out.println(motor.getId()+"| "+ motor.getName());
+		});
+		System.out.println("Enter MotorBoatId:");
+		Scanner sc=new Scanner(System.in);
+		int boatId=sc.nextInt();
+		String motorBoatName=DataLoad.getMotorBoatName(boatId);
+		List<Booking> bookings=bookingsDb.stream().filter(item->item.getMotorBoatId()==1).collect(Collectors.toList());
+		List<Hire> hi=hires.stream().filter(item->item.getMotorBoatId()==1).collect(Collectors.toList());
+		System.out.println("MotorBoatName| Slot");
+		bookings.forEach(item->{
+			System.out.println(motorBoatName+ "|" + item.getSlot());
+		});
+		hi.forEach(item->{
+			System.out.println(motorBoatName+ "|" + item.getSlot());
+		});
+	}
+
+	public void hireMotorBoat() {
 		System.out.println("List of Members");
 		showListOfMembers();
 		Scanner sc = new Scanner(System.in);
 		int memId = sc.nextInt();
-		if(BookingUtil.hireCount(memId)>3) {
+		if (BookingUtil.hireCount(memId) > 3) {
 			System.out.println("Bookings limit is exceeded ");
-		}
-		else {
+		} else {
 			System.out.println("Enter the Slot\nDay :");
 			String day = sc.next();
 			System.out.println("Enter the Slot\nHour :");
 			String hour = sc.next();
 			String slot = day.concat("-").concat(hour).concat(":00");
-			
-			if(BookingUtil.bookingCount(memId) >0 && BookingUtil.noofBoatsBusyAtThisSlot(slot)==10) {
+
+			if (BookingUtil.bookingCount(memId) > 0 && BookingUtil.noofBoatsBusyAtThisSlot(slot).size() == 10) {
 				System.out.println("This member is already involved in lesson or MotorBoat is not available");
-			}
-			else {
-				
+			} else {
+				List<Integer> noofBoatsBusyAtThisSlot = BookingUtil.noofBoatsBusyAtThisSlot(slot);
+				printboats(noofBoatsBusyAtThisSlot);
+				System.out.println("Enter MotorBoatId: ");
+				int motorBoatId = sc.nextInt();
+				hires.add(new Hire(memId, motorBoatId, slot));
+				System.out.println("Successfully Hired");
+
 			}
 		}
 	}
 
-	public static void getListOfInstructorsForlesson() {
+	private static void printboats(List<Integer> noofBoatsBusyAtThisSlot) {
+		System.out.println("ID| Name");
+		DataLoad.loadMotorBoats().forEach(item -> {
+			if (!noofBoatsBusyAtThisSlot.contains(item.getId())) {
+				System.out.println(item.getId() + "|" + item.getName());
+			}
+		});
+
+	}
+
+	public void getListOfInstructorsForlesson() {
 		System.out.println("List of instructors");
 		printInstructors();
 		System.out.println("Please enter the Instructor Id");
 		Scanner sc = new Scanner(System.in);
 		int memId = sc.nextInt();
-		List<Booking> bookings = DataLoad.loadBookings().stream().filter(item -> item.getMemberId() == memId)
+		List<Booking> bookings = bookingsDb.stream().filter(item -> item.getMemberId() == memId)
 				.collect(Collectors.toList());
 		if (bookings.isEmpty()) {
 			System.out.print("There are no lessons booking available for this instructor");
@@ -58,13 +136,13 @@ public class Application {
 
 	}
 
-	public static void getMemberDetails() {
+	public void getMemberDetails() {
 		System.out.println("List of Members");
 		showListOfMembers();
 		System.out.println("Please enter the Member Id");
 		Scanner sc = new Scanner(System.in);
 		int memId = sc.nextInt();
-		List<Booking> bookings = DataLoad.loadBookings().stream().filter(item -> item.getMemberId() == memId)
+		List<Booking> bookings = bookingsDb.stream().filter(item -> item.getMemberId() == memId)
 				.collect(Collectors.toList());
 		if (bookings.isEmpty()) {
 			System.out.print("There are no bookings available for this member");
@@ -80,7 +158,7 @@ public class Application {
 
 	}
 
-	public static void booklessonForMember() {
+	public void booklessonForMember() {
 		System.out.println("List of Members");
 
 		Scanner sc = new Scanner(System.in);
@@ -91,15 +169,18 @@ public class Application {
 			showListOfMembers();
 			System.out.println("Please enter the Member Id");
 			memId = sc.nextInt();
-			if (BookingUtil.bookingCount(memId) < 2) {
+			if (BookingUtil.bookingCount(memId) <2) {
+				
 				flag = false;
+				continue;
 			}
+			System.out.println("Member hs exceeded their booking for this week");
 		}
 
 		mainSection(memId);
 	}
 
-	public static void mainSection(int memId) {
+	public void mainSection(int memId) {
 		Scanner sc = new Scanner(System.in);
 		if (BookingUtil.bookingCount(memId) < 3) {
 			Optional<Member> memberOp = DataLoad.loadMembers().stream().filter(item -> item.getId() == memId)
@@ -113,7 +194,6 @@ public class Application {
 					if (instructorOp.isPresent()) {
 						Instructor instructor = instructorOp.get();
 						instructorId = instructor.getId();
-						System.out.println(instructor.getName());
 
 					}
 				} else if (member.getMemberType().contains("mblh")) {
@@ -131,12 +211,12 @@ public class Application {
 
 	}
 
-	private static void slotBooking(int instructorId, int memId, Scanner sc) {
+	private void slotBooking(int instructorId, int memId, Scanner sc) {
 
-		List<String> bookedSlots = DataLoad.loadBookings().stream()
-				.filter(item -> item.getInstructorId() == instructorId).map(item -> item.getSlot())
-				.collect(Collectors.toList());
+		List<String> bookedSlots = bookingsDb.stream().filter(item -> item.getInstructorId() == instructorId)
+				.map(item -> item.getSlot()).collect(Collectors.toList());
 		System.out.println("----Instructor Name----");
+		System.out.println(DataLoad.getInstructorName(instructorId));
 		System.out.println("-----Booked slots----");
 		bookedSlots.stream().forEach(System.out::println);
 		System.out.println("-----Available slots----");
@@ -172,19 +252,18 @@ public class Application {
 
 		if (availableSlot && availMotorBoat) {
 			Booking booking = new Booking(memId, instructorId, 1, slot, boatId);
-			List<Booking> loadBookings = DataLoad.loadBookings();
-			loadBookings.add(booking);
-			DataLoad.loadBookings().add(booking);
+
+			bookingsDb.add(booking);
+			System.out.println("Booking has been successfully completed");
 
 		}
 
-		System.out.println(DataLoad.loadBookings().size());
+		System.out.println(bookingsDb.size());
 		System.out.println();
 	}
 
-	private static boolean isMotorBoatAvail(int boatId) {
-		Optional<Booking> bookingOp = DataLoad.loadBookings().stream().filter(item -> item.getMotorBoatId() == boatId)
-				.findFirst();
+	private boolean isMotorBoatAvail(int boatId) {
+		Optional<Booking> bookingOp = bookingsDb.stream().filter(item -> item.getMotorBoatId() == boatId).findFirst();
 		if (bookingOp.isPresent()) {
 			return false;
 		}
@@ -208,9 +287,9 @@ public class Application {
 
 	}
 
-	private static boolean isAvailableSlot(int memId, int instruid, String slot) {
+	private boolean isAvailableSlot(int memId, int instruid, String slot) {
 
-		Optional<Booking> bookingOp = DataLoad.loadBookings().stream().filter(item -> (item.getSlot().contains(slot)
+		Optional<Booking> bookingOp = bookingsDb.stream().filter(item -> (item.getSlot().contains(slot)
 				&& item.getMemberId() == memId && item.getInstructorId() == instruid)).findFirst();
 		if (bookingOp.isPresent()) {
 			return false;

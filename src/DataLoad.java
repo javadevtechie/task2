@@ -160,9 +160,9 @@ public class DataLoad {
 		hire.setSlot("1-11:00");
 		
 		Hire hire1=new Hire();
-		hire.setMemberid(5);
-		hire.setMotorBoatId(2);
-		hire.setSlot("2-11:00");
+		hire1.setMemberid(5);
+		hire1.setMotorBoatId(2);
+		hire1.setSlot("2-11:00");
 		
 		
 		List<Hire> hires=new ArrayList<Hire>();
